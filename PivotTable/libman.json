@@ -3,18 +3,17 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "pivottable@2.23.0",
-      "destination": "wwwroot/lib/pivottable/",
-      "files": [
-        "pivot.min.js",
-        "pivot.min.css"
-      ]
-    },
-    {
       "library": "jqueryui@1.12.1",
       "destination": "wwwroot/lib/jqueryui/",
       "files": [
         "jquery-ui.min.js"
+      ]
+    },
+    {
+      "library": "pivottable@2.23.0",
+      "destination": "wwwroot/lib/pivottable/",
+      "files": [
+        "pivot.tr.min.js"
       ]
     }
   ]

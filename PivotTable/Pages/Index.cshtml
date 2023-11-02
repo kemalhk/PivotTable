@@ -9,7 +9,6 @@
     <h1 class="display-4">InvoiceList</h1>
 </div>
 <div id="test">
-
 </div>
 <table class="table table-sm">
     <thead>
@@ -50,15 +49,20 @@
 </table>
 
 <div class="container">
-    <div>
-        <input type="button" class="btn btn-info" onclick="exportTableToExcel('pvtTable','PivotDownload')" value="Export to Excel" />
-    </div>
+
     <div id="pivotoutput" style="margin:30px;"></div>
+</div>
+<div class="container">
+
+    <div id="output" style="margin:30px;"></div>
+</div><div class="container">
+
+    <div id="outputtest" style="margin:30px;"></div>
 </div>
 
 @*//pivot table*@
 <script type="text/javascript">
-    
+
 
     var myInvoiceDetails = [];
 
@@ -75,7 +79,7 @@
             );
         });
     }
-    
+
     function getPivot() {
         return fetch('./Index?handler=InvoicePivotData', {
             method: 'get',
@@ -109,3 +113,62 @@
 
     getPivot();
 </script>
+
+<script>
+    $(function () {
+
+        var derivers = $.pivotUtilities.derivers;
+        var renderers = $.extend($.pivotUtilities.renderers,
+            $.pivotUtilities.plotly_renderers);
+
+        $.getJSON("/json/FileName.json", function (mps) {
+            $("#output").pivotUI(mps, {
+                renderers: renderers,
+                cols: ["Party"], rows: ["Province"],
+                rendererName: "Horizontal Stacked Bar Chart",
+                rowOrder: "value_a_to_z", colOrder: "value_z_to_a",
+            });
+        });
+    });
+</script>
+
+@*<script>
+    $(function () {
+        $.getJSON("/json/FileName.json", function (mps) {
+            $("#outputtest").pivotUI(mps, {
+                renderers: $.pivotUtilities,
+                cols: [], rows: ["Province", "Party"],
+                rendererName: "Treemap"
+            });
+        });
+    });
+</script>*@
+<script>
+    $(function () {
+
+        var derivers = $.pivotUtilities.derivers;
+        var renderers = $.extend($.pivotUtilities.renderers,
+            $.pivotUtilities.c3_renderers);
+
+        $.getJSON("/json/FileName.json", function (mps) {
+            $("#outputtest").pivotUI(mps, {
+                renderers: renderers,
+                cols: ["Party"], rows: ["Province"],
+                rendererName: "Horizontal Stacked Bar Chart",
+                rowOrder: "value_z_to_a", colOrder: "value_z_to_a",
+                rendererOptions: {
+                    c3: {
+                        data: {
+                            colors: {
+                                Liberal: '#dc3912', Conservative: '#3366cc', NDP: '#ff9900',
+                                Green: '#109618', 'Bloc Quebecois': '#990099'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+            
