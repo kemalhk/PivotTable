@@ -1,0 +1,111 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+
+    <h1 class="display-4">InvoiceList</h1>
+</div>
+<div id="test">
+
+</div>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceList[0].InvoiceNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceList[0].Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceList[0].CostCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvoiceList[0].Period)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.InvoiceList)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CostCategory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Period)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    <div>
+        <input type="button" class="btn btn-info" onclick="exportTableToExcel('pvtTable','PivotDownload')" value="Export to Excel" />
+    </div>
+    <div id="pivotoutput" style="margin:30px;"></div>
+</div>
+
+@*//pivot table*@
+<script type="text/javascript">
+    
+
+    var myInvoiceDetails = [];
+
+    function drawPivot() {
+        $(function () {
+            $("#pivotoutput").pivotUI(
+                myInvoiceDetails,
+                {
+                    rows: ["CostCategory"],
+                    cols: ["Period"],
+                    vals: ["Amount"],
+                    aggregatorName: "Sum"
+                }
+            );
+        });
+    }
+    
+    function getPivot() {
+        return fetch('./Index?handler=InvoicePivotData', {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8'
+            }
+        })
+            .then(function (response) {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error("Response Not OK");
+                }
+            })
+            .then(function (text) {
+                try {
+                    return JSON.parse(text);
+                } catch (err) {
+                    throw new Error("Error Parsing JSON");
+                }
+            })
+            .then(function (responseJson) {
+                myInvoiceDetails = responseJson;
+                drawPivot();
+            })
+            .catch(function (error) {
+                console.error("Error: " + error.message);
+            });
+    }
+
+
+    getPivot();
+</script>
